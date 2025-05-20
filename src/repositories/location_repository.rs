@@ -1,7 +1,8 @@
 use mongodm::bson::Bson;
-use mongodm::mongo::Database;
+use mongodm::mongo::{Database, error::Error as MongoError};
 use mongodm::ToRepository;
 use crate::dtos::location_dto::LocationDataDTO;
+use crate::exceptions::api_error::ApiError;
 use crate::models::location::Location;
 
 #[derive(Clone, Debug)]
@@ -14,11 +15,11 @@ impl LocationRepository {
         Self { db }
     }
 
-    pub async fn save_location(&self, location: LocationDataDTO) -> Result<Bson, String> {
+    pub async fn save_location(&self, location: LocationDataDTO) -> Result<Bson, ApiError> {
         let location = Location::new(location);
         let repo = &self.db.repository::<Location>();
         repo.insert_one(location).await
             .map(|data| data.inserted_id)
-            .map_err(|e| e.to_string())
+            .map_err(ApiError::from)
     }
 }
