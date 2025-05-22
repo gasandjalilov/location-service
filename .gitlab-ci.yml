@@ -9,8 +9,7 @@ stages:
   - test
   - build
 
-before_script:
-  - docker info
+
 
 test_rust:
   stage: test
