@@ -6,6 +6,7 @@ mod dtos;
 mod config;
 mod exceptions;
 
+use std::env;
 use axum::Router;
 use axum::routing::{post};
 use crate::config::configs::DatabaseConfig;
@@ -30,7 +31,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/location", post(save_location))
         .with_state(controller);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
+    let listener = tokio::net::TcpListener::bind(env::var("BASE_URL")
+        .unwrap_or_else(|_| "0.0.0.0:8080".to_string()))
         .await
         .expect("Failed to bind to port");
     
