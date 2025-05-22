@@ -16,9 +16,10 @@ test_rust:
   image: rust:alpine3.21
   script:
     - apk add musl-dev
-    - cargo --version
-    - rustc --version
-    - cargo clippy --fix --allow-dirty --all-targets
+    - rustup component add clippy
+    - rustup component add rustfmt
+    - cargo clippy --all-targets --all-features --workspace
+    - cargo fmt --check
     - cargo test --all-features
 
 build_docker_image:
