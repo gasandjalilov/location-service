@@ -1,0 +1,54 @@
+image: rust:latest
+
+stages:
+  - build
+  - package
+
+cache:
+  paths:
+    - target/
+
+before_script:
+  - rustc --version
+  - cargo --version
+
+build_release:
+  stage: build
+  script:
+    - cargo build --release --target x86_64-unknown-linux-musl
+  artifacts:
+    paths:
+      - target/x86_64-unknown-linux-musl/release/location-service
+
+docker_build:
+  image: docker:20.10
+  stage: package
+  services:
+    - docker:20.10-dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE_NAME: location-service
+  script:
+    - apk add --no-cache docker-cli
+    - docker info
+    - |
+      cat > Dockerfile.alpine <<EOF
+      FROM alpine:3.19
+      RUN apk add --no-cache ca-certificates
+      WORKDIR /app
+      COPY target/x86_64-unknown-linux-musl/release/location-service /app/
+      CMD ["./location-service"]
+      EOF
+    - |
+      if ! docker build -f Dockerfile.alpine -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .; then
+        echo "Docker build failed"
+        exit 1
+      fi
+    - |
+      if ! docker save $IMAGE_NAME:latest | gzip > $IMAGE_NAME.tar.gz; then
+        echo "Docker save failed"
+        exit 1
+      fi
+  artifacts:
+    paths:
+      - location-service.tar.gz
