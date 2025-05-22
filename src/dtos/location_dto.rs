@@ -10,5 +10,5 @@ pub struct LocationDTO {
 pub struct LocationDataDTO {
     pub client_id: i32,
     pub location: LocationDTO,
-    pub session_id: String
+    pub session_id: String,
 }

@@ -1,9 +1,9 @@
-use axum::http::{StatusCode};
+use crate::dtos::wrapper::ApiResponse;
 use axum::Json;
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use mongodm::mongo::error::Error;
 use mongodm::prelude::MongoError;
-use crate::dtos::wrapper::ApiResponse;
 
 #[derive(Debug)]
 pub struct ApiError(anyhow::Error);
@@ -19,7 +19,6 @@ impl From<MongoError> for ApiError {
         ApiError(value.into())
     }
 }
-
 
 impl From<ApiError> for ApiResponse<()> {
     fn from(value: ApiError) -> Self {

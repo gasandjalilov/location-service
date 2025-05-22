@@ -1,18 +1,18 @@
+mod config;
 mod controllers;
+mod dtos;
+mod exceptions;
 mod models;
 mod repositories;
 mod services;
-mod dtos;
-mod config;
-mod exceptions;
 
-use std::env;
-use axum::Router;
-use axum::routing::{post};
 use crate::config::configs::DatabaseConfig;
-use crate::controllers::location::{save_location, LocationController};
+use crate::controllers::location::{LocationController, save_location};
 use crate::repositories::location_repository::LocationRepository;
 use crate::services::location_service::LocationService;
+use axum::Router;
+use axum::routing::post;
+use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,14 +31,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/location", post(save_location))
         .with_state(controller);
 
-    let listener = tokio::net::TcpListener::bind(env::var("BASE_URL")
-        .unwrap_or_else(|_| "0.0.0.0:8080".to_string()))
-        .await
-        .expect("Failed to bind to port");
-    
+    let listener = tokio::net::TcpListener::bind(
+        env::var("BASE_URL").unwrap_or_else(|_| "0.0.0.0:8080".to_string()),
+    )
+    .await
+    .expect("Failed to bind to port");
+
     axum::serve(listener, app)
         .await
         .expect("Error while serving");
-    
+
     Ok(())
 }

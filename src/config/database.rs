@@ -1,6 +1,6 @@
-use mongodm::mongo::{Client, Database};
-use mongodm::mongo::options::ClientOptions;
 use crate::config::configs::DatabaseConfig;
+use mongodm::mongo::options::ClientOptions;
+use mongodm::mongo::{Client, Database};
 
 pub struct MNGDatabase {
     pub client: Client,

@@ -1,5 +1,5 @@
-use mongodm::{field, CollectionConfig, Index, IndexOption, Indexes, Model};
 use mongodm::prelude::ObjectId;
+use mongodm::{CollectionConfig, Index, IndexOption, Indexes, Model, field};
 use serde::{Deserialize, Serialize};
 
 use crate::dtos::location_dto::LocationDataDTO;
@@ -17,7 +17,6 @@ impl CollectionConfig for LocationCollConf {
             .with(Index::new(field!(client_id in Location)))
     }
 }
-
 
 #[derive(Serialize, Deserialize)]
 pub struct Location {

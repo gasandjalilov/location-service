@@ -1,5 +1,5 @@
-use std::env;
 use serde::Deserialize;
+use std::env;
 
 #[derive(Debug, Deserialize)]
 pub struct DatabaseConfig {
